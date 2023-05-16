@@ -4,7 +4,7 @@
 
         <ClientOnly>
             <div v-if="isLogin">
-                已登入，{{ remainTime }}後將自動跳轉回首頁，或點擊 <nuxt-link to="/">Home</nuxt-link>
+                已登入，將自動跳轉回首頁，或點擊 <nuxt-link to="/">Home</nuxt-link>
             </div>
         </ClientOnly>
     </div>
@@ -16,7 +16,6 @@ import { useUserStore } from '~/store/user';
 const route = useRoute();
 const code = useState<string>(() => route.query.code as string);
 const state = useState<string>(() => route.query.state as string);
-const remainTime = useState<number>(() => 3);
 const userStore = useUserStore();
 
 const { isLogin } = storeToRefs(userStore);
@@ -26,13 +25,9 @@ if (code.value && process.server) {
     await userStore.getUserInfo();
     await userStore.getMemToken();
 }
+
 if (isLogin.value && process.client) {
-    setInterval(() => {
-        remainTime.value--;
-        if (remainTime.value <= 0) {
-            navigateTo('/');
-        }
-    }, 1000);
+    navigateTo('/');
 }
 
 </script>
