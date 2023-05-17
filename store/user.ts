@@ -96,7 +96,6 @@ export const useUserStore = defineStore('user', () => {
             body: data,
         });
         const json = await res.json();
-        console.log(json);
         if (json.access_token) {
             return memToken.value = json.access_token;
         }
