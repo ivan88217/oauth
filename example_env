@@ -1,0 +1,7 @@
+CLIENT_ID=46
+CLIENT_SECRET=XXXXXXXXXXX
+USER_AUTHORIZATION_URI: "https://accounts.mastripms.com/oauth/authorize", // 正式環境會員中心授權登入網址
+ACCESS_TOKEN_URI: "https://accounts.mastripms.com/oauth/token", // 正式環境會員中心取得token網址
+USER_INFO_URI: "https://accounts.mastripms.com/oauth/me", // 正式環境會員中心取得使用者資料網址
+EXCHANGE_TOKEN_URI: "https://ota-api.tourbobo.com/mem/user/token/exchange", // 正式環境交換權杖網址
+REDIRECT_URI=http://localhost:3000/oauth/callback
