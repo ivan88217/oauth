@@ -13,6 +13,11 @@ export default defineNuxtConfig({
       userInfoUri: process.env.USER_INFO_URI, // 會員中心取得使用者資料網址
       exchangeTokenUri: process.env.EXCHANGE_TOKEN_URI, // 交換權杖網址
       redirectUri: process.env.REDIRECT_URI, // 會員中心授權登入後的轉址網址（需改成自己的網址）
+      googleOneTapUri: process.env.GOOGLE_ONE_TAP_URI, // 會員中心授權登入後的轉址網址（需改成自己的網址）
+
+      googleClientId: process.env.GOOGLE_CLIENT_ID, // 會員中心client_id
+      googleClientSecret: process.env.GOOGLE_CLIENT_SECRET, // 會員中心client_secret
+      googleRedirectUri: process.env.GOOGLE_REDIRECT_URI, // 會員中心授權登入後的轉址網址（需改成自己的網址）
     }
   },
   modules: ['@pinia/nuxt'],

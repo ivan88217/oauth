@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { useOauthConfig } from '~/config/oauth';
 
-interface User {
-    id: number;
+export interface User {
+    id: number|string;
     name: string;
     email: string;
 }
@@ -15,30 +15,12 @@ export const useUserStore = defineStore('user', () => {
     const isLogin = computed(() => memToken.value !== '' && accountCenterToken.value !== ''); // 是否登入
 
     /**
-     * 取得會員中心使用者資料
-     */
-    const getUserInfo = async () => {
-        const url = oauth.userInfoUri;
-        const res = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Authorization': 'Bearer ' + accountCenterToken.value,
-            },
-        })
-        const json = await res.json();
-        if (json.id) {
-            return accountCenterUser.value = json;
-        }
-        return accountCenterUser.value = null;
-    };
-
-
-    /**
      * 登入
      */
     const login = () => {
         const url = oauth.userAuthorizationUri + "?" + new URLSearchParams({
+            email: 'ivan.shi@dunqian.tw',
+            role: 'mem',
             client_id: oauth.clientId,
             redirect_uri: oauth.redirectUri,
             response_type: oauth.responseType,
@@ -72,16 +54,39 @@ export const useUserStore = defineStore('user', () => {
         });
         const json = await res.json();
         if (json.access_token) {
-            return accountCenterToken.value = json.access_token;
+            return json.access_token;
         }
-        return accountCenterToken.value = "";
+        return "";
+    }
+
+    /**
+     * 由 google token 取得會員中心 token
+     */
+    const getTokenFromGoogle = async (googleToken: string) => {
+        const url = oauth.googleOneTapUri;
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                token: googleToken,
+            }),
+        });
+        const json = await res.json();
+        console.log(json);
+        if (json.access_token) {
+            return json.access_token;
+        }
+        return "";
     }
 
     /**
      * 拿會員中心的token交換會員平台token
      * @returns string 會員平台token
      */
-    const getMemToken = async () => {
+    const getMemToken = async (token: string) => {
         const url = oauth.exchangeTokenUri;
         const data = new URLSearchParams({
             hotel_id: '1',
@@ -91,15 +96,15 @@ export const useUserStore = defineStore('user', () => {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Accept': 'application/json',
-                'Authorization': 'Bearer ' + accountCenterToken.value,
+                'Authorization': 'Bearer ' + token,
             },
             body: data,
         });
         const json = await res.json();
         if (json.access_token) {
-            return memToken.value = json.access_token;
+            return json.access_token;
         }
-        return memToken.value = "";
+        return "";
     }
 
     /**
@@ -117,9 +122,10 @@ export const useUserStore = defineStore('user', () => {
         memToken,
         accountCenterUser,
 
-        getUserInfo,
         getMemToken,
         getToken,
+        getTokenFromGoogle,
+
         login,
         logout,
     }
